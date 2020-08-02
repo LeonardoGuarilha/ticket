@@ -11,6 +11,7 @@ import {
   ValidationPipe,
   ParseIntPipe,
   UseGuards,
+  Logger,
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dtos/create-ticket.dto';
@@ -24,6 +25,8 @@ import { GetUser } from 'src/auth/get-user.decorator';
 @Controller('tickets')
 @UseGuards(AuthGuard())
 export class TicketController {
+  private logger = new Logger('TicketController');
+
   constructor(private ticketService: TicketService) {}
 
   @Get()
@@ -31,6 +34,11 @@ export class TicketController {
     @Query(ValidationPipe) filterDto: GetTicketsFilteredDto,
     @GetUser() user: User,
   ): Promise<Ticket[]> {
+    this.logger.verbose(
+      `Usuário ${user.nome} retornando os tickets, Filtro: ${JSON.stringify(
+        filterDto,
+      )}`,
+    );
     return this.ticketService.getTickets(filterDto, user);
   }
 
@@ -48,6 +56,13 @@ export class TicketController {
     @Body() createTicketsDto: CreateTicketDto,
     @GetUser() user: User,
   ): Promise<Ticket> {
+    this.logger.verbose(
+      `Usuário ${
+        user.nome
+      } está criando um novo ticket, Dados: ${JSON.stringify(
+        createTicketsDto,
+      )}`,
+    );
     return this.ticketService.createTicket(createTicketsDto, user);
   }
 

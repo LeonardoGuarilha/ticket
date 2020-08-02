@@ -66,6 +66,14 @@ export class TicketService {
     ticket.mensagem = mensagem;
     ticket.status = status;
     ticket.usuarioAtual = usuarioAtual;
+    ticket.respondido = false;
+    console.log(ticket.respondido);
+
+    if (user.is_agent) {
+      ticket.respondido = true;
+    } else {
+      ticket.respondido = false;
+    }
 
     await ticket.save();
 

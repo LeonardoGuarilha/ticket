@@ -15,4 +15,6 @@ export class CreateTicketDto {
   usuarioAtual: string;
 
   status: TicketStatus;
+
+  respondido: boolean;
 }

@@ -4,9 +4,12 @@ import { CreateTicketDto } from './dtos/create-ticket.dto';
 import { TicketStatus } from './ticket-status.enum';
 import { GetTicketsFilteredDto } from './dtos/get-tickets-filtered.dto';
 import { User } from 'src/auth/user.entity';
+import { Logger, InternalServerErrorException } from '@nestjs/common';
 
 @EntityRepository(Ticket)
 export class TicketRepository extends Repository<Ticket> {
+  private logger = new Logger('TicketRepository');
+
   async createTicket(
     createTicketDto: CreateTicketDto,
     user: User,
@@ -21,8 +24,17 @@ export class TicketRepository extends Repository<Ticket> {
     ticket.usuarioAtual = usuarioAtual;
     ticket.user = user;
     ticket.status = TicketStatus.ABERTO;
+    ticket.respondido = false;
 
-    await ticket.save();
+    try {
+      await ticket.save();
+    } catch (error) {
+      this.logger.error(
+        `Erro ao criar o ticket para o usuário ${user.nome}. Data: ${createTicketDto}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
 
     delete ticket.user;
 
@@ -37,7 +49,9 @@ export class TicketRepository extends Repository<Ticket> {
 
     const query = this.createQueryBuilder('ticket');
 
-    query.where('ticket.userId = :userId', { userId: user.id });
+    if (user.is_agent) {
+      query.where('ticket.userId = :userId', { userId: user.id });
+    }
 
     if (status) {
       // Add where clouse
@@ -51,8 +65,17 @@ export class TicketRepository extends Repository<Ticket> {
       );
     }
 
-    const ticket = await query.getMany();
-
-    return ticket;
+    try {
+      const ticket = await query.getMany();
+      return ticket;
+    } catch (error) {
+      this.logger.error(
+        `Erro ao recuperar tickets do usuário ${
+          user.nome
+        }. Filtros: ${JSON.stringify(filterDto)}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException();
+    }
   }
 }

@@ -37,4 +37,7 @@ export class Ticket extends BaseEntity {
 
   @Column()
   userId: number;
+
+  @Column()
+  respondido: boolean;
 }
