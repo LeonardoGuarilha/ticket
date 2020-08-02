@@ -29,13 +29,17 @@ export class TicketController {
   @Get()
   getTickets(
     @Query(ValidationPipe) filterDto: GetTicketsFilteredDto,
+    @GetUser() user: User,
   ): Promise<Ticket[]> {
-    return this.ticketService.getTickets(filterDto);
+    return this.ticketService.getTickets(filterDto, user);
   }
 
   @Get('/:id')
-  getTicketById(@Param('id', ParseIntPipe) id: number): Promise<Ticket> {
-    return this.ticketService.getTicketById(id);
+  getTicketById(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<Ticket> {
+    return this.ticketService.getTicketById(id, user);
   }
 
   @Post()
@@ -48,15 +52,19 @@ export class TicketController {
   }
 
   @Delete('/:id')
-  deleteTask(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.ticketService.deleteTicket(id);
+  deleteTask(
+    @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
+  ): Promise<void> {
+    return this.ticketService.deleteTicket(id, user);
   }
 
   @Patch('/:id')
   updateTicket(
     @Body(TicketStatusValidationPipe) createTicketDto: CreateTicketDto,
     @Param('id', ParseIntPipe) id: number,
+    @GetUser() user: User,
   ): Promise<Ticket> {
-    return this.ticketService.updateTicket(createTicketDto, id);
+    return this.ticketService.updateTicket(createTicketDto, id, user);
   }
 }

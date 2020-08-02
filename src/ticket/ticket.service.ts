@@ -13,12 +13,17 @@ export class TicketService {
     private ticketRepository: TicketRepository,
   ) {}
 
-  async getTickets(filterDto: GetTicketsFilteredDto): Promise<Ticket[]> {
-    return await this.ticketRepository.getTickets(filterDto);
+  async getTickets(
+    filterDto: GetTicketsFilteredDto,
+    user: User,
+  ): Promise<Ticket[]> {
+    return await this.ticketRepository.getTickets(filterDto, user);
   }
 
-  async getTicketById(id: number): Promise<Ticket> {
-    const found = await this.ticketRepository.findOne(id);
+  async getTicketById(id: number, user: User): Promise<Ticket> {
+    const found = await this.ticketRepository.findOne({
+      where: { id, userId: user.id },
+    });
 
     if (!found) {
       throw new NotFoundException(`Ticket with ID ${id} not found`);
@@ -34,8 +39,8 @@ export class TicketService {
     return await this.ticketRepository.createTicket(createTicketDto, user);
   }
 
-  async deleteTicket(id: number): Promise<void> {
-    const result = await this.ticketRepository.delete(id);
+  async deleteTicket(id: number, user: User): Promise<void> {
+    const result = await this.ticketRepository.delete({ id, userId: user.id });
 
     if (result.affected === 0) {
       throw new NotFoundException(`Ticket with ID ${id} not found`);
@@ -45,6 +50,7 @@ export class TicketService {
   async updateTicket(
     createTicketDto: CreateTicketDto,
     id: number,
+    user: User,
   ): Promise<Ticket> {
     const {
       assunto,
@@ -53,7 +59,7 @@ export class TicketService {
       status,
       usuarioAtual,
     } = createTicketDto;
-    const ticket = await this.getTicketById(id);
+    const ticket = await this.getTicketById(id, user);
 
     ticket.assunto = assunto;
     ticket.criador = criador;

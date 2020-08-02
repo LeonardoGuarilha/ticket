@@ -19,27 +19,34 @@ export class TicketRepository extends Repository<Ticket> {
     ticket.criador = criador;
     ticket.mensagem = mensagem;
     ticket.usuarioAtual = usuarioAtual;
-    // ticket.user = user;
+    ticket.user = user;
     ticket.status = TicketStatus.ABERTO;
 
     await ticket.save();
 
+    delete ticket.user;
+
     return ticket;
   }
 
-  async getTickets(filterDto: GetTicketsFilteredDto): Promise<Ticket[]> {
+  async getTickets(
+    filterDto: GetTicketsFilteredDto,
+    user: User,
+  ): Promise<Ticket[]> {
     const { search, status } = filterDto;
 
-    const query = this.createQueryBuilder('tickets');
+    const query = this.createQueryBuilder('ticket');
+
+    query.where('ticket.userId = :userId', { userId: user.id });
 
     if (status) {
       // Add where clouse
-      query.andWhere('tickets.status = :status', { status });
+      query.andWhere('ticket.status = :status', { status });
     }
 
     if (search) {
       query.andWhere(
-        'tickets.assunto LIKE :search OR tickets.mensagem LIKE :search',
+        'ticket.assunto LIKE :search OR ticket.mensagem LIKE :search',
         { search: `%${search}%` },
       );
     }
