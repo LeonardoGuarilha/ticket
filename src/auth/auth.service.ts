@@ -6,6 +6,11 @@ import { User } from './user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { IJwtPayload } from './jwt-payload.interface';
 
+interface IReturn {
+  user: User;
+  tokenAcesso: string;
+}
+
 @Injectable()
 export class AuthService {
   private logger = new Logger('AuthService');
@@ -19,21 +24,22 @@ export class AuthService {
     return await this.userRepository.signUp(authCredentialsDto);
   }
 
-  async signIn(
-    authCredentialsDto: AuthCredentialsDto,
-  ): Promise<{ tokenAcesso: string }> {
-    const nome = await this.userRepository.validateUserPassword(
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<IReturn> {
+    //Promise<{ tokenAcesso: string }>
+    const user = await this.userRepository.validateUserPassword(
       authCredentialsDto,
     );
 
-    if (!nome) {
+    if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
+
+    const nome = user.nome;
 
     const payload: IJwtPayload = { nome };
     const tokenAcesso = await this.jwtService.sign(payload);
     this.logger.debug(`Token JWT com o payload ${JSON.stringify(payload)}`);
 
-    return { tokenAcesso };
+    return { user, tokenAcesso };
   }
 }
