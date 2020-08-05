@@ -14,14 +14,14 @@ export class TicketRepository extends Repository<Ticket> {
     createTicketDto: CreateTicketDto,
     user: User,
   ): Promise<Ticket> {
-    const { assunto, criador, mensagem, usuarioAtual } = createTicketDto;
+    const { assunto, mensagem } = createTicketDto;
 
     const ticket = new Ticket();
 
     ticket.assunto = assunto;
-    ticket.criador = criador;
+    ticket.criador = user.nome;
     ticket.mensagem = mensagem;
-    ticket.usuarioAtual = usuarioAtual;
+    ticket.usuarioAtual = user.id;
     ticket.user = user;
     ticket.status = TicketStatus.ABERTO;
     ticket.respondido = false;
@@ -49,9 +49,9 @@ export class TicketRepository extends Repository<Ticket> {
 
     const query = this.createQueryBuilder('ticket');
 
-    if (user.is_agent) {
-      query.where('ticket.userId = :userId', { userId: user.id });
-    }
+    //if (user.is_agent) {
+    query.where('ticket.userId = :userId', { userId: user.id });
+    //}
 
     if (status) {
       // Add where clouse
@@ -77,5 +77,11 @@ export class TicketRepository extends Repository<Ticket> {
       );
       throw new InternalServerErrorException();
     }
+  }
+
+  async getTicketsDidNotAnswer(): Promise<Ticket[]> {
+    const tickets = await this.find({ where: { respondido: false } });
+
+    return tickets;
   }
 }

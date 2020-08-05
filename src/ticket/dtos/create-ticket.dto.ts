@@ -8,10 +8,8 @@ export class CreateTicketDto {
   @IsNotEmpty()
   mensagem: string;
 
-  @IsNotEmpty()
   criador: string;
 
-  @IsNotEmpty()
   usuarioAtual: string;
 
   status: TicketStatus;

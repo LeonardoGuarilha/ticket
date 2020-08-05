@@ -12,6 +12,7 @@ import {
   ParseIntPipe,
   UseGuards,
   Logger,
+  Put,
 } from '@nestjs/common';
 import { TicketService } from './ticket.service';
 import { CreateTicketDto } from './dtos/create-ticket.dto';
@@ -42,12 +43,17 @@ export class TicketController {
     return this.ticketService.getTickets(filterDto, user);
   }
 
+  @Get('/didnotanswer')
+  getTicketsDidNotAnswer(): Promise<Ticket[]> {
+    return this.ticketService.getTicketsDidNotAnswer();
+  }
+
   @Get('/:id')
   getTicketById(
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
   ): Promise<Ticket> {
-    return this.ticketService.getTicketById(id, user);
+    return this.ticketService.getTicketById(id);
   }
 
   @Post()
@@ -74,12 +80,22 @@ export class TicketController {
     return this.ticketService.deleteTicket(id, user);
   }
 
-  @Patch('/:id')
+  // @Patch('/:id')
+  // updateTicket(
+  //   @Body(TicketStatusValidationPipe) createTicketDto: CreateTicketDto,
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @GetUser() user: User,
+  // ): Promise<Ticket> {
+  //   console.log(createTicketDto);
+  //   return this.ticketService.updateTicket(createTicketDto, id, user);
+  // }
+
+  @Put('/:id')
   updateTicket(
-    @Body(TicketStatusValidationPipe) createTicketDto: CreateTicketDto,
+    @Body('mensagem') mensagem: string,
     @Param('id', ParseIntPipe) id: number,
     @GetUser() user: User,
   ): Promise<Ticket> {
-    return this.ticketService.updateTicket(createTicketDto, id, user);
+    return this.ticketService.updateTicket(mensagem, id, user);
   }
 }

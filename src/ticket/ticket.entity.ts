@@ -23,7 +23,7 @@ export class Ticket extends BaseEntity {
   criador: string;
 
   @Column()
-  usuarioAtual: string;
+  usuarioAtual: number;
 
   @Column()
   status: TicketStatus;

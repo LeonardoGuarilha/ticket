@@ -5,6 +5,7 @@ import { TicketRepository } from './ticket.repository';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from './ticket.entity';
 import { User } from 'src/auth/user.entity';
+import { TicketStatus } from './ticket-status.enum';
 
 @Injectable()
 export class TicketService {
@@ -20,9 +21,25 @@ export class TicketService {
     return await this.ticketRepository.getTickets(filterDto, user);
   }
 
-  async getTicketById(id: number, user: User): Promise<Ticket> {
+  async getTicketsDidNotAnswer(): Promise<Ticket[]> {
+    return await this.ticketRepository.getTicketsDidNotAnswer();
+  }
+
+  // async getTicketById(id: number, user: User): Promise<Ticket> {
+  //   const found = await this.ticketRepository.findOne({
+  //     where: { id, userId: user.id },
+  //   });
+
+  //   if (!found) {
+  //     throw new NotFoundException(`Ticket with ID ${id} not found`);
+  //   }
+
+  //   return found;
+  // }
+
+  async getTicketById(id: number): Promise<Ticket> {
     const found = await this.ticketRepository.findOne({
-      where: { id, userId: user.id },
+      where: { id },
     });
 
     if (!found) {
@@ -48,26 +65,13 @@ export class TicketService {
   }
 
   async updateTicket(
-    createTicketDto: CreateTicketDto,
+    mensagem: string,
     id: number,
     user: User,
   ): Promise<Ticket> {
-    const {
-      assunto,
-      criador,
-      mensagem,
-      status,
-      usuarioAtual,
-    } = createTicketDto;
-    const ticket = await this.getTicketById(id, user);
+    const ticket = await this.getTicketById(id);
 
-    ticket.assunto = assunto;
-    ticket.criador = criador;
     ticket.mensagem = mensagem;
-    ticket.status = status;
-    ticket.usuarioAtual = usuarioAtual;
-    ticket.respondido = false;
-    console.log(ticket.respondido);
 
     if (user.is_agent) {
       ticket.respondido = true;
