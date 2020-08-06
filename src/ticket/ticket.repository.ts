@@ -14,7 +14,7 @@ export class TicketRepository extends Repository<Ticket> {
     createTicketDto: CreateTicketDto,
     user: User,
   ): Promise<Ticket> {
-    const { assunto, mensagem } = createTicketDto;
+    const { assunto, mensagem, tagId } = createTicketDto;
 
     const ticket = new Ticket();
 
@@ -25,6 +25,7 @@ export class TicketRepository extends Repository<Ticket> {
     ticket.user = user;
     ticket.status = TicketStatus.ABERTO;
     ticket.respondido = false;
+    ticket.tagId = tagId;
 
     try {
       await ticket.save();

@@ -4,7 +4,9 @@ import {
   PrimaryGeneratedColumn,
   Column,
   Unique,
+  OneToMany,
 } from 'typeorm';
+import { Ticket } from 'src/ticket/ticket.entity';
 
 @Entity('tag')
 @Unique(['nome'])
@@ -14,4 +16,11 @@ export class Tag extends BaseEntity {
 
   @Column()
   nome: string;
+
+  @OneToMany(
+    type => Ticket,
+    ticket => ticket.tag,
+    { eager: true },
+  )
+  ticket: Ticket[];
 }

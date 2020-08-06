@@ -14,5 +14,7 @@ export class CreateTicketDto {
 
   status: TicketStatus;
 
+  tagId: number;
+
   respondido: boolean;
 }
