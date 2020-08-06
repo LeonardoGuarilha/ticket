@@ -6,6 +6,11 @@ import { typeOrmConfig } from './config/typeorm.config';
 import { TagModule } from './tag/tag.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig), TicketModule, AuthModule, TagModule],
+  imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
+    TicketModule,
+    AuthModule,
+    TagModule,
+  ],
 })
 export class AppModule {}

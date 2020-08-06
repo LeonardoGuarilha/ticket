@@ -14,7 +14,7 @@ export class CreateTicketDto {
 
   status: TicketStatus;
 
-  tagId: number;
+  nometag: string;
 
   respondido: boolean;
 }

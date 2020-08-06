@@ -83,4 +83,14 @@ export class TicketService {
 
     return ticket;
   }
+
+  async encerraTicket(id: number): Promise<Ticket> {
+    const ticket = await this.getTicketById(id);
+
+    ticket.encerrado = true;
+
+    await ticket.save();
+
+    return ticket;
+  }
 }

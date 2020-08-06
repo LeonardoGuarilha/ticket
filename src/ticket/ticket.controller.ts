@@ -80,16 +80,6 @@ export class TicketController {
     return this.ticketService.deleteTicket(id, user);
   }
 
-  // @Patch('/:id')
-  // updateTicket(
-  //   @Body(TicketStatusValidationPipe) createTicketDto: CreateTicketDto,
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @GetUser() user: User,
-  // ): Promise<Ticket> {
-  //   console.log(createTicketDto);
-  //   return this.ticketService.updateTicket(createTicketDto, id, user);
-  // }
-
   @Put('/:id')
   updateTicket(
     @Body('mensagem') mensagem: string,
@@ -97,5 +87,10 @@ export class TicketController {
     @GetUser() user: User,
   ): Promise<Ticket> {
     return this.ticketService.updateTicket(mensagem, id, user);
+  }
+
+  @Put('/encerra/:id')
+  encerraTicket(@Param('id', ParseIntPipe) id: number): Promise<Ticket> {
+    return this.ticketService.encerraTicket(id);
   }
 }

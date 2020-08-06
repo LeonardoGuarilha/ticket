@@ -7,7 +7,6 @@ import {
 } from 'typeorm';
 import { TicketStatus } from './ticket-status.enum';
 import { User } from 'src/auth/user.entity';
-import { Tag } from 'src/tag/tag.entity';
 
 @Entity('ticket')
 export class Ticket extends BaseEntity {
@@ -39,16 +38,12 @@ export class Ticket extends BaseEntity {
   @Column()
   userId: number;
 
-  @ManyToOne(
-    type => Tag,
-    tags => tags.ticket,
-    { eager: false },
-  )
-  tag: Tag;
-
   @Column()
-  tagId: number;
+  nometag: string;
 
   @Column()
   respondido: boolean;
+
+  @Column()
+  encerrado: boolean;
 }
