@@ -1,4 +1,4 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, UseGuards, Get } from '@nestjs/common';
 import { TagService } from './tag.service';
 import { Tag } from './tag.entity';
 import { AuthGuard } from '@nestjs/passport';
@@ -11,5 +11,10 @@ export class TagController {
   @Post()
   createTag(@Body('nome') nome: string): Promise<Tag> {
     return this.tagService.createTag(nome);
+  }
+
+  @Get()
+  getTags(): Promise<Tag[]> {
+    return this.tagService.getTags();
   }
 }

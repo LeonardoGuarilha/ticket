@@ -13,4 +13,8 @@ export class TagService {
   async createTag(nome: string): Promise<Tag> {
     return await this.tagRepository.createTag(nome);
   }
+
+  async getTags(): Promise<Tag[]> {
+    return await this.tagRepository.find();
+  }
 }
